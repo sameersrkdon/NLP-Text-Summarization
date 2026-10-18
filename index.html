@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>Clearline — Conversation Summarizer</title>
+  <style>
+    :root{color-scheme:light;--ink:#15243a;--muted:#718097;--line:#e6ebf2;--paper:#fff;--canvas:#f5f7fb;--blue:#3667e8;--blue-dark:#2454d4;--mint:#dff6ef;--shadow:0 22px 60px rgba(34,54,91,.08)}
+    *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+    .topbar{height:76px;border-bottom:1px solid rgba(224,231,241,.8);display:flex;align-items:center;justify-content:space-between;padding:0 max(28px,calc((100vw - 1180px)/2));background:rgba(255,255,255,.78);backdrop-filter:blur(14px)}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:750;letter-spacing:-.04em;font-size:18px}.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(140deg,#4b7cf4,#294fc4);display:grid;place-items:center;color:white;box-shadow:0 7px 18px #3667e844}.brand-mark svg{width:19px;height:19px}
+    .top-note{display:flex;align-items:center;gap:9px;color:#66758b;font-size:13px}.secure-dot{width:8px;height:8px;background:#35b887;border-radius:99px;box-shadow:0 0 0 4px #35b8871a}
+    main{max-width:1180px;margin:auto;padding:52px 28px 70px}.intro{text-align:center;max-width:740px;margin:0 auto 36px}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:#4165bb;background:#eaf0ff;border:1px solid #dbe5ff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}.eyebrow svg{width:14px;height:14px}.intro h1{font-size:clamp(36px,5vw,56px);line-height:1.06;letter-spacing:-.055em;margin:18px 0 13px}.intro p{color:var(--muted);font-size:16px;line-height:1.65;margin:0}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:stretch}.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;min-height:465px;display:flex;flex-direction:column}.panel-head{padding:22px 24px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #edf0f5}.panel-title{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:730}.icon-box{width:30px;height:30px;border-radius:9px;background:#eff3ff;color:#4166cd;display:grid;place-items:center}.icon-box svg{width:16px;height:16px}.subtle{color:#8895a8;font-size:12px}
+    .input-wrap{padding:20px 24px 18px;display:flex;flex-direction:column;flex:1}.sample-line{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.sample-hint{font-size:12px;color:#8390a3}.text-action{border:0;background:transparent;color:#4267cf;font:inherit;font-size:12px;font-weight:650;cursor:pointer;padding:4px}.text-action:hover{color:#1f48b8}
+    textarea{width:100%;flex:1;min-height:280px;resize:vertical;border:1px solid #e4e9f0;border-radius:13px;padding:16px 17px;color:#34445b;background:#fcfdff;font:14px/1.75 inherit;font-family:inherit;outline:none;transition:border .18s,box-shadow .18s}textarea::placeholder{color:#a6b0bf}textarea:focus{border-color:#8ca8f6;box-shadow:0 0 0 4px #3667e814;background:#fff}.input-foot{display:flex;justify-content:space-between;align-items:center;padding:12px 2px 17px;color:#8995a6;font-size:12px}.count strong{color:#53637b;font-weight:650}.primary{border:0;width:100%;height:48px;border-radius:12px;background:var(--blue);color:white;font-weight:700;font-size:14px;letter-spacing:.005em;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:background .2s,transform .2s,box-shadow .2s;box-shadow:0 8px 18px #3667e82b}.primary:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 11px 22px #3667e83b}.primary:disabled{opacity:.7;cursor:wait;transform:none}.primary svg{width:17px;height:17px}.spinner{width:16px;height:16px;border:2px solid #ffffff66;border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .result-content{padding:24px;display:flex;flex-direction:column;flex:1}.empty-state{margin:auto;text-align:center;max-width:270px;padding:26px 10px}.empty-art{width:74px;height:74px;margin:0 auto 20px;border-radius:24px;background:linear-gradient(145deg,#edf2ff,#e3f7f1);display:grid;place-items:center;color:#4167d1}.empty-art svg{width:32px;height:32px}.empty-state h2{font-size:16px;margin:0 0 8px;letter-spacing:-.02em}.empty-state p{font-size:13px;line-height:1.6;color:#8996a8;margin:0}.result-hidden{display:none}.result-label{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:#8190a4;font-weight:750;margin-bottom:13px}.summary-text{font-size:15px;line-height:1.8;color:#34445a;white-space:pre-wrap}.result-spacer{flex:1;min-height:35px}.result-foot{border-top:1px solid #edf0f5;padding-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}.model-pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#5f7188;background:#f3f6fa;border:1px solid #e8edf3;padding:7px 10px;border-radius:999px}.model-pill .secure-dot{width:6px;height:6px;box-shadow:none}.copy-btn{border:1px solid #e1e7f0;background:white;border-radius:9px;padding:8px 11px;color:#4b5c72;font-size:12px;font-weight:650;cursor:pointer;display:flex;gap:7px;align-items:center}.copy-btn:hover{background:#f8faff;border-color:#cad7f5}.copy-btn svg{width:14px;height:14px}.error{display:none;margin-top:12px;padding:11px 13px;border:1px solid #f1cece;background:#fff6f5;border-radius:10px;color:#a83b3b;font-size:12px;line-height:1.5}.footer-note{text-align:center;font-size:12px;color:#9aa5b5;margin:21px 0 0}.footer-note span{color:#7e8c9f}
+    @media(max-width:800px){main{padding:38px 18px 52px}.topbar{padding:0 18px}.workspace{grid-template-columns:1fr}.panel{min-height:400px}.panel:first-child{min-height:470px}.intro{margin-bottom:26px}.result-content{min-height:350px}}
+    @media(max-width:480px){.topbar{height:64px}.top-note{font-size:11px}.brand{font-size:16px}.intro p{font-size:14px}.panel-head{padding:18px 18px 14px}.input-wrap,.result-content{padding:18px}.panel{border-radius:16px}.intro h1{font-size:37px}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h14M5 10h9M5 14.5h14M5 19h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>clearline</div>
+    <div class="top-note"><span class="secure-dot"></span>Private, on-device summarization</div>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m19 16 .9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9L19 16Z" fill="currentColor"/></svg>AI conversation assistant</div>
+      <h1>Long conversations.<br>Clear takeaways.</h1>
+      <p>Turn a chat, meeting, or transcript into a concise summary in seconds.</p>
+    </section>
+    <section class="workspace" aria-label="Summarizer workspace">
+      <article class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.8h7l4 4V20H7a2 2 0 0 1-2-2V5.8a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7"/><path d="M14 4v4h4M8.5 12h7M8.5 15.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>Your conversation</div><span class="subtle">Input</span></div>
+        <div class="input-wrap">
+          <div class="sample-line"><span class="sample-hint">Paste a conversation or transcript</span><button class="text-action" id="sampleBtn" type="button">Try a sample</button></div>
+          <textarea id="sourceText" maxlength="15000" placeholder="Alex: Are we still meeting at 3?&#10;Sam: Could we move it to 3:30?&#10;Alex: That works. I’ll send an updated invite." aria-label="Conversation to summarize"></textarea>
+          <div class="input-foot"><span>Up to 15,000 characters</span><span class="count"><strong id="charCount">0</strong> / 15,000</span></div>
+          <button class="primary" id="summarizeBtn" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m19 16 .7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z" fill="currentColor"/></svg><span>Generate summary</span></button>
+          <div class="error" id="errorBox" role="alert"></div>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><div class="panel-title"><span class="icon-box" style="background:#eaf7f2;color:#278267"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5.5h14M5 10h9M5 14.5h14M5 19h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>Your summary</div><span class="subtle" id="resultMeta">Output</span></div>
+        <div class="result-content">
+          <div class="empty-state" id="emptyState"><div class="empty-art"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4.5h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 9h7M8.5 12h7M8.5 15h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m16.5 2 .6 1.6 1.7.6-1.7.6-.6 1.7-.6-1.7-1.6-.6 1.6-.6.6-1.6Z" fill="#36a889"/></svg></div><h2>Your summary will appear here</h2><p>Add a conversation on the left and select Generate summary to get started.</p></div>
+          <div class="result-hidden" id="resultState"><div class="result-label">Key points, distilled</div><div class="summary-text" id="summaryText"></div></div>
+          <div class="result-spacer"></div>
+          <div class="result-foot"><span class="model-pill"><span class="secure-dot"></span><span id="deviceLabel">Local model</span></span><button class="copy-btn" id="copyBtn" type="button" style="display:none"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" stroke="currentColor" stroke-width="1.7"/></svg><span>Copy summary</span></button></div>
+        </div>
+      </article>
+    </section>
+    <p class="footer-note">Your text stays on this computer <span>·</span> Powered by your fine-tuned T5 model</p>
+  </main>
+  <script>
+    const input = document.getElementById('sourceText');
+    const count = document.getElementById('charCount');
+    const button = document.getElementById('summarizeBtn');
+    const errorBox = document.getElementById('errorBox');
+    const sample = `Maya: The client liked the new homepage design but asked for a clearer pricing section.\nLeo: I can update the pricing cards today and add the annual discount.\nMaya: Great. I’ll send the revised copy by 4 PM. Can you have the design ready tomorrow morning?\nLeo: Yes, I’ll share a preview by 10 AM. We can review it together before sending it to the client.`;
+    input.addEventListener('input', () => { count.textContent = input.value.length.toLocaleString(); errorBox.style.display = 'none'; });
+    document.getElementById('sampleBtn').addEventListener('click', () => { input.value = sample; input.dispatchEvent(new Event('input')); input.focus(); });
+    button.addEventListener('click', async () => {
+      const text = input.value.trim();
+      errorBox.style.display = 'none';
+      if (!text) { errorBox.textContent = 'Paste a conversation first, or try the sample.'; errorBox.style.display = 'block'; input.focus(); return; }
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner"></span><span>Summarizing on your computer…</span>';
+      try {
+        const response = await fetch('/summarize/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dialogue: text }) });
+        const data = await response.json();
+        if (!response.ok) { const detail = Array.isArray(data.detail) ? data.detail[0]?.msg : data.detail; throw new Error(data.error || detail || 'Could not generate a summary.'); }
+        document.getElementById('summaryText').textContent = data.summary;
+        document.getElementById('deviceLabel').textContent = `Running locally · ${data.device}`;
+        document.getElementById('resultMeta').textContent = `${data.summary.trim().split(/\s+/).filter(Boolean).length} words`;
+        document.getElementById('emptyState').style.display = 'none';
+        document.getElementById('resultState').classList.remove('result-hidden');
+        document.getElementById('copyBtn').style.display = 'inline-flex';
+      } catch (error) {
+        errorBox.textContent = error.message || 'Something went wrong. Please try again.';
+        errorBox.style.display = 'block';
+      } finally {
+        button.disabled = false;
+        button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m19 16 .7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7L19 16Z" fill="currentColor"/></svg><span>Generate summary</span>';
+      }
+    });
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const copyButton = document.getElementById('copyBtn');
+      try { await navigator.clipboard.writeText(document.getElementById('summaryText').textContent); copyButton.querySelector('span').textContent = 'Copied'; setTimeout(() => copyButton.querySelector('span').textContent = 'Copy summary', 1400); }
+      catch { errorBox.textContent = 'Clipboard access is unavailable in this browser.'; errorBox.style.display = 'block'; }
+    });
+  </script>
+</body>
+</html>
+
